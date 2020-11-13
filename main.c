@@ -6,16 +6,16 @@
 #include <unistd.h>
 
 #define CTRL_KEY(k) ((k) & 0x1f)
-#define CLR_SCREEN "\x1b[2J"
-#define PC_SOF "\x1b[H"
 
+#define CLR_SCREEN write(STDOUT_FILENO, "\x1b[2J", 4) // clear screen
+#define CRS_POS_SOF write(STDOUT_FILENO, "\x1b[H", 3) // position cursor at top
 /** Data **/
 
 struct termios orig_termios;
 
 void die(const char *s) {
-    write(STDOUT_FILENO, CLR_SCREEN, 4); // position cursor at the top
-    write(STDOUT_FILENO, PC_SOF, 3); // position cursor at the top
+    CLR_SCREEN;
+    CRS_POS_SOF;
     perror(s);
     exit(1);
 }
@@ -69,14 +69,15 @@ char readKey() {
 
 void printText(char *buffer) {
     printf("%s", buffer);
+    CRS_POS_SOF;
 }
 
 void refreshScreen() {
-    write(STDOUT_FILENO, CLR_SCREEN, 4); // position cursor at the top
-    write(STDOUT_FILENO, PC_SOF, 3); // position cursor at the top
+    CLR_SCREEN;
+    CRS_POS_SOF;
 
     // further drawing
-    //write(STDOUT_FILENO, PC_SOF, 3); // position cursor at the top
+    //CRS_POS_SOF;
 }
 
 /** Input **/
@@ -87,16 +88,22 @@ void processKeypress() {
     switch (c) {
         case CTRL_KEY('q'): 
         case CTRL_KEY('c'):
-            write(STDOUT_FILENO, CLR_SCREEN, 4); // position cursor at the top
-            write(STDOUT_FILENO, PC_SOF, 3); // position cursor at the top                 
+            CLR_SCREEN;
+            CRS_POS_SOF;
             exit(0);
             break;
         case CTRL_KEY('r'):
             // TODO: restart test
             printf("refresh\n");
             break;
+        case 127:
+            // TODO: Cursor pos -1
+            printf("\033[0;31m");
+            printf("backspace");
+            printf("\033[0m");
         default:
             printf("%c", c);
+            // TODO: Cursor pos +1
             // TODO: check if keypress checks with character under cursor
             // TODO: colors?
     }
