@@ -12,8 +12,6 @@
 #define CRS_POS_SOF write(STDOUT_FILENO, "\x1b[H", 3) // position cursor at top
 #define CRS_POS_F write(STDOUT_FILENO, "\x1b[C", 3) // position cursor forward
 #define CRS_POS_B write(STDOUT_FILENO, "\x1b[D", 3) // position cursor backward
-#define CRS_POS_D write(STDOUT_FILENO, "\x1b[B", 3); \
-                  write(STDOUT_FILENO, "\x1b[1000D", 4) // position cursor down 
 
 /** Data **/
 
@@ -82,12 +80,6 @@ char readKey() {
 
 /** Output **/
 
-void printText() {
-    printf("%s", tt.buffer);
-    printf("\n");
-    CRS_POS_SOF;
-}
-
 void refreshScreen() {
     CLR_SCREEN;
     CRS_POS_SOF;
@@ -108,16 +100,20 @@ void processKeypress() {
             // TODO: restart test
             die("TODO: Restart Test");
             break;
-        case 32:  // space
-            CRS_POS_F;
-            tt.pos++;
-            break;
-        case 127:  // backspace
-            if (tt.pos == 0) break;
+        case 127:
+            // TODO: Jump to line above
+            if (tt.pos == 0 || tt.buffer[tt.pos - 1] == '\n') break;
             CRS_POS_B;
             tt.pos--;
             write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
             CRS_POS_B;
+            break;
+        case '\r':
+            if (tt.buffer[tt.pos] == '\n') {
+                // print green return arrow
+                write(STDOUT_FILENO, "\033[0;32m\u23CE\n\033[0m", 14);
+                tt.pos++;
+            }
             break;
         default:
             if (iscntrl(c) && c != '\r') break;
@@ -127,7 +123,12 @@ void processKeypress() {
                 write(STDOUT_FILENO, "\033[0m", 4);
             } else {
                 write(STDOUT_FILENO, "\033[0;31m", 7);
-                write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
+                if (tt.buffer[tt.pos] == '\n') {
+                    write(STDOUT_FILENO, "\u23CE", 3);
+                    write(STDOUT_FILENO, "\n", 1);
+                } else {
+                    write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
+                }
                 write(STDOUT_FILENO, "\033[0m", 4);
             }
             tt.pos++;
@@ -141,9 +142,7 @@ void processKeypress() {
 
 /** Init **/
 
-int main() {
-    // TODO: get filename by cli flag
-
+void parseText() {
     tt.filename = "test.txt";
     tt.buffer = 0;
     FILE * f = fopen(tt.filename, "rb");
@@ -157,10 +156,40 @@ int main() {
         tt.buffer = malloc(tt.length);
         if (tt.buffer) fread(tt.buffer, 1, tt.length, f);
         fclose(f); 
-    } // TODO: Add maximum file size 
+    } 
+}
 
+void printText() {
+    for (int i = 0; i < tt.length; i++) {
+        if (tt.buffer[i] == ' ' && tt.buffer[i+1] == ' ') {
+        // drop double spaces
+            for (int j = i; j < tt.length - 1; j++) {
+                tt.buffer[j] = tt.buffer[j + 1];
+            }
+            tt.length--;
+            i--;
+        } else if (tt.buffer[i + 1] == '\n' && tt.buffer[i] == ' ') { 
+        // drop spaces before line breaks
+            for (int j = i; j < tt.length - 1; j++) {
+                tt.buffer[j] = tt.buffer[j + 1];
+            }
+            tt.length--;
+            i--;
+        } else {
+            if (tt.buffer[i] == '\n') {
+                printf("\u23CE\n");
+            } else {
+                printf("%c", tt.buffer[i]);
+            }
+        }
+    }
+    CRS_POS_SOF;
+}
+
+int main() {
     enableRawMode();
     refreshScreen();
+    parseText("test.txt");
     printText();
 
     while (1) {
@@ -169,3 +198,4 @@ int main() {
     
     return 0;
 }
+
