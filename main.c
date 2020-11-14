@@ -99,7 +99,6 @@ void refreshScreen() {
 
 void processKeypress() {
     char c = readKey();
-    //char current_char = 'x';
 
     switch (c) {
         case CTRL_KEY('q'): 
@@ -124,7 +123,9 @@ void processKeypress() {
             if (iscntrl(c)) {
                 break;
             }
-            write(STDOUT_FILENO, &c, 1);
+            if (tt.buffer[tt.pos] == c) {
+                write(STDOUT_FILENO, &c, 1);
+            }
             // TODO: check if keypress checks with character under cursor
             // TODO: colors
     }
