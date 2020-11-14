@@ -17,16 +17,19 @@
 
 /** Data **/
 
-struct termios orig_termios;
-
 struct typingtest {
     char *filename;
     char *buffer;
-    int pos;
-    int mistakes;
+    unsigned long length;
+    unsigned int pos;
+    unsigned int mistakes;
 };
 
 struct typingtest tt;
+
+struct termios orig_termios;
+
+/** Exiting **/
 
 void die(const char *s) {
     CLR_SCREEN;
@@ -50,8 +53,6 @@ void enableRawMode() {
     struct termios raw = orig_termios;
     raw.c_iflag &= ~(IXON | ICRNL);
     raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
-//    raw.c_cc[VMIN] = 0;
-//    raw.c_cc[VTIME] = 1;
     /** Reference:
      *  c_iflag
      *    IXON: disables Ctrl-s and Ctrl-q behaviour
@@ -74,9 +75,8 @@ void enableRawMode() {
 char readKey() {
     int nread;
     char c;
-    while ((nread = read(STDIN_FILENO, &c, 1)) != 1) {
+    while ((nread = read(STDIN_FILENO, &c, 1)) != 1) 
         if (nread == -1 && errno != EAGAIN) die("read"); 
-    }
     return c;
 }
 
@@ -84,15 +84,13 @@ char readKey() {
 
 void printText() {
     printf("%s", tt.buffer);
+    printf("\n");
     CRS_POS_SOF;
 }
 
 void refreshScreen() {
     CLR_SCREEN;
     CRS_POS_SOF;
-
-    // further drawing
-    //CRS_POS_SOF;
 }
 
 /** Input **/
@@ -108,26 +106,36 @@ void processKeypress() {
             exit(0);
         case CTRL_KEY('r'):
             // TODO: restart test
-            printf("refresh\n");
+            die("TODO: Restart Test");
             break;
-        case 32: // space
+        case 32:  // space
             CRS_POS_F;
-            break;
-        case 10: // nextline
-            CRS_POS_D; // TODO: not working
+            tt.pos++;
             break;
         case 127:  // backspace
+            if (tt.pos == 0) break;
+            CRS_POS_B;
+            tt.pos--;
+            write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
             CRS_POS_B;
             break;
         default:
-            if (iscntrl(c)) {
-                break;
-            }
-            if (tt.buffer[tt.pos] == c) {
+            if (iscntrl(c) && c != '\r') break;
+            if (c == tt.buffer[tt.pos]) {
+                write(STDOUT_FILENO, "\033[0;32m", 7);
                 write(STDOUT_FILENO, &c, 1);
+                write(STDOUT_FILENO, "\033[0m", 4);
+            } else {
+                write(STDOUT_FILENO, "\033[0;31m", 7);
+                write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
+                write(STDOUT_FILENO, "\033[0m", 4);
             }
-            // TODO: check if keypress checks with character under cursor
-            // TODO: colors
+            tt.pos++;
+
+        if (tt.pos == tt.length) {
+            // TODO: calculate score
+            die("TODO: Calc score");
+        }
     }
 }
 
@@ -138,17 +146,16 @@ int main() {
 
     tt.filename = "test.txt";
     tt.buffer = 0;
-    long length;
     FILE * f = fopen(tt.filename, "rb");
 
     if (f == NULL) {
         die(tt.filename);
     } else {
         fseek(f, 0, SEEK_END); 
-        length = ftell(f);
+        tt.length = ftell(f);
         fseek(f, 0, SEEK_SET);
-        tt.buffer = malloc(length);
-        if (tt.buffer) fread(tt.buffer, 1, length, f);
+        tt.buffer = malloc(tt.length);
+        if (tt.buffer) fread(tt.buffer, 1, tt.length, f);
         fclose(f); 
     } // TODO: Add maximum file size 
 
