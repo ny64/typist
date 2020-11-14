@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <termios.h>
 #include <unistd.h>
 
@@ -9,9 +10,23 @@
 
 #define CLR_SCREEN write(STDOUT_FILENO, "\x1b[2J", 4) // clear screen
 #define CRS_POS_SOF write(STDOUT_FILENO, "\x1b[H", 3) // position cursor at top
+#define CRS_POS_F write(STDOUT_FILENO, "\x1b[C", 3) // position cursor forward
+#define CRS_POS_B write(STDOUT_FILENO, "\x1b[D", 3) // position cursor backward
+#define CRS_POS_D write(STDOUT_FILENO, "\x1b[B", 3); \
+                  write(STDOUT_FILENO, "\x1b[1000D", 4) // position cursor down 
+
 /** Data **/
 
 struct termios orig_termios;
+
+struct typingtest {
+    char *filename;
+    char *buffer;
+    int pos;
+    int mistakes;
+};
+
+struct typingtest tt;
 
 void die(const char *s) {
     CLR_SCREEN;
@@ -35,8 +50,8 @@ void enableRawMode() {
     struct termios raw = orig_termios;
     raw.c_iflag &= ~(IXON | ICRNL);
     raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
-    raw.c_cc[VMIN] = 0;
-    raw.c_cc[VTIME] = 1;
+//    raw.c_cc[VMIN] = 0;
+//    raw.c_cc[VTIME] = 1;
     /** Reference:
      *  c_iflag
      *    IXON: disables Ctrl-s and Ctrl-q behaviour
@@ -67,8 +82,8 @@ char readKey() {
 
 /** Output **/
 
-void printText(char *buffer) {
-    printf("%s", buffer);
+void printText() {
+    printf("%s", tt.buffer);
     CRS_POS_SOF;
 }
 
@@ -84,6 +99,7 @@ void refreshScreen() {
 
 void processKeypress() {
     char c = readKey();
+    //char current_char = 'x';
 
     switch (c) {
         case CTRL_KEY('q'): 
@@ -91,21 +107,26 @@ void processKeypress() {
             CLR_SCREEN;
             CRS_POS_SOF;
             exit(0);
-            break;
         case CTRL_KEY('r'):
             // TODO: restart test
             printf("refresh\n");
             break;
-        case 127:
-            // TODO: Cursor pos -1
-            printf("\033[0;31m");
-            printf("backspace");
-            printf("\033[0m");
+        case 32: // space
+            CRS_POS_F;
+            break;
+        case 10: // nextline
+            CRS_POS_D; // TODO: not working
+            break;
+        case 127:  // backspace
+            CRS_POS_B;
+            break;
         default:
-            printf("%c", c);
-            // TODO: Cursor pos +1
+            if (iscntrl(c)) {
+                break;
+            }
+            write(STDOUT_FILENO, &c, 1);
             // TODO: check if keypress checks with character under cursor
-            // TODO: colors?
+            // TODO: colors
     }
 }
 
@@ -113,27 +134,28 @@ void processKeypress() {
 
 int main() {
     // TODO: get filename by cli flag
-    char *filename = "test.txt";
-    char *buffer = 0;
+
+    tt.filename = "test.txt";
+    tt.buffer = 0;
     long length;
-    FILE * f = fopen(filename, "rb");
+    FILE * f = fopen(tt.filename, "rb");
 
     if (f == NULL) {
-        die(filename);
+        die(tt.filename);
     } else {
         fseek(f, 0, SEEK_END); 
         length = ftell(f);
         fseek(f, 0, SEEK_SET);
-        buffer = malloc(length);
-        if (buffer) fread(buffer, 1, length, f);
+        tt.buffer = malloc(length);
+        if (tt.buffer) fread(tt.buffer, 1, length, f);
         fclose(f); 
     } // TODO: Add maximum file size 
 
     enableRawMode();
+    refreshScreen();
+    printText();
 
     while (1) {
-        refreshScreen();
-        printText(buffer);
         processKeypress();
     }
     
