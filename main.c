@@ -8,11 +8,23 @@
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
-#define CLR_SCREEN write(STDOUT_FILENO, "\x1b[2J", 4) // clear screen
-#define CRS_POS_SOF write(STDOUT_FILENO, "\x1b[H", 3) // position cursor at top
-#define CRS_POS_F write(STDOUT_FILENO, "\x1b[C", 3) // position cursor forward
-#define CRS_POS_B write(STDOUT_FILENO, "\x1b[D", 3) // position cursor backward
-#define CRS_POS_UP write(STDOUT_FILENO, "\x1b[A", 3) // position cursor up 
+// print to screen
+#define PTS(s) write(STDOUT_FILENO, s, strlen(s))
+#define PRINT_FROM_BUFFER write(STDOUT_FILENO, &tt.buffer[tt.pos], 1) 
+
+// clear screen
+#define CLR_SCREEN PTS("\x1b[2J") 
+
+// move cursor
+#define CRS_POS_SOF PTS("\x1b[H") 
+#define CRS_POS_F PTS("\x1b[C") 
+#define CRS_POS_B PTS("\x1b[D") 
+#define CRS_POS_UP PTS("\x1b[A") 
+
+// font colors 
+#define FONT_CLR_DEF PTS("\033[0m")
+#define FONT_CLR_GRN PTS("\033[0;32m")
+#define FONT_CLR_RED PTS("\033[0;31m")
 
 /** Data **/
 
@@ -45,29 +57,11 @@ void disableRawMode() {
 }
 
 void enableRawMode() {
-    // store current terminal attributes
     if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) die("tcgetattr");
     atexit(disableRawMode);
-    // alter terminal attributes
     struct termios raw = orig_termios;
     raw.c_iflag &= ~(IXON | ICRNL);
     raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
-    /** Reference:
-     *  c_iflag
-     *    IXON: disables Ctrl-s and Ctrl-q behaviour
-     *    ICRNL: disables Ctrl-M
-     *  c_oflag
-     *    OPOST: disables moving cursor to the start on a new line
-     *  c_lflag
-     *    ECHO: stop input being printed to terminal
-     *    ICANON: turn off canonical mode 
-     *    ISIG: disables Ctrl-c and Ctrl-z behaviour
-     *    IEXTEN: disables Ctrl-V behaviour
-     *  c_cc (arr)
-     *    VMIN: minimum number of bytes before read() returns
-     *    VTIME: maximum time to wait before read() returns (1 = 1/10s)
-     **/
-    // set terminal attributes
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
@@ -102,7 +96,6 @@ void processKeypress() {
             die("TODO: Restart Test");
             break;
         case 127:
-            // TODO: Jump to line above
             if (tt.pos == 0) {
                 break;
             } else if (tt.buffer[tt.pos - 1] == '\n') {
@@ -116,40 +109,40 @@ void processKeypress() {
                     CRS_POS_F;
                 }
                 tt.pos--;
-                write(STDOUT_FILENO, "\u23CE", 3);
+                PTS("\u23CE");
                 CRS_POS_B;
                 break;
             } else {
                 CRS_POS_B;
                 tt.pos--;
-                write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
+                PRINT_FROM_BUFFER;
                 CRS_POS_B;
                 break;
             }
         case '\r':
             if (tt.buffer[tt.pos] == '\n') {
                 // print green return arrow
-                write(STDOUT_FILENO, "\033[0;32m\u23CE\n\033[0m", 15);
+                FONT_CLR_GRN;
+                PTS("\u23CE\n");
                 tt.pos++;
             }
             break;
         default:
             if (iscntrl(c) && c != '\r') break;
             if (c == tt.buffer[tt.pos]) {
-                write(STDOUT_FILENO, "\033[0;32m", 7);
-                write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
-                write(STDOUT_FILENO, "\033[0m", 4);
+                FONT_CLR_GRN;
+                PRINT_FROM_BUFFER;
             } else {
-                write(STDOUT_FILENO, "\033[0;31m", 7);
+                FONT_CLR_RED;
                 if (tt.buffer[tt.pos] == '\n') {
-                    write(STDOUT_FILENO, "\u23CE", 3);
-                    write(STDOUT_FILENO, "\n", 1);
+                    PTS("\u23CE\n");
                 } else {
-                    write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
+                    PRINT_FROM_BUFFER;
                 }
-                write(STDOUT_FILENO, "\033[0m", 4);
             }
             tt.pos++;
+
+        FONT_CLR_DEF;
 
         if (tt.pos == tt.length) {
             // TODO: calculate score
