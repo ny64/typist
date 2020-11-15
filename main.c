@@ -12,6 +12,7 @@
 #define CRS_POS_SOF write(STDOUT_FILENO, "\x1b[H", 3) // position cursor at top
 #define CRS_POS_F write(STDOUT_FILENO, "\x1b[C", 3) // position cursor forward
 #define CRS_POS_B write(STDOUT_FILENO, "\x1b[D", 3) // position cursor backward
+#define CRS_POS_UP write(STDOUT_FILENO, "\x1b[A", 3) // position cursor up 
 
 /** Data **/
 
@@ -102,16 +103,33 @@ void processKeypress() {
             break;
         case 127:
             // TODO: Jump to line above
-            if (tt.pos == 0 || tt.buffer[tt.pos - 1] == '\n') break;
-            CRS_POS_B;
-            tt.pos--;
-            write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
-            CRS_POS_B;
-            break;
+            if (tt.pos == 0) {
+                break;
+            } else if (tt.buffer[tt.pos - 1] == '\n') {
+                int i = 2;
+                CRS_POS_UP;
+                while (tt.buffer[tt.pos - i] != '\n' && tt.pos - i != 0) {
+                    CRS_POS_F;
+                    i++;
+                }
+                if (tt.pos - i == 0) {
+                    CRS_POS_F;
+                }
+                tt.pos--;
+                write(STDOUT_FILENO, "\u23CE", 3);
+                CRS_POS_B;
+                break;
+            } else {
+                CRS_POS_B;
+                tt.pos--;
+                write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
+                CRS_POS_B;
+                break;
+            }
         case '\r':
             if (tt.buffer[tt.pos] == '\n') {
                 // print green return arrow
-                write(STDOUT_FILENO, "\033[0;32m\u23CE\n\033[0m", 14);
+                write(STDOUT_FILENO, "\033[0;32m\u23CE\n\033[0m", 15);
                 tt.pos++;
             }
             break;
@@ -119,7 +137,7 @@ void processKeypress() {
             if (iscntrl(c) && c != '\r') break;
             if (c == tt.buffer[tt.pos]) {
                 write(STDOUT_FILENO, "\033[0;32m", 7);
-                write(STDOUT_FILENO, &c, 1);
+                write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
                 write(STDOUT_FILENO, "\033[0m", 4);
             } else {
                 write(STDOUT_FILENO, "\033[0;31m", 7);
