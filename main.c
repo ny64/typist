@@ -9,22 +9,22 @@
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 // print to screen
-#define PTS(s) write(STDOUT_FILENO, s, strlen(s))
+#define PRINT_TO_SCREEN(s) write(STDOUT_FILENO, s, strlen(s))
 #define PRINT_FROM_BUFFER write(STDOUT_FILENO, &tt.buffer[tt.pos], 1) 
 
 // clear screen
-#define CLR_SCREEN PTS("\x1b[2J") 
+#define CLR_SCREEN PRINT_TO_SCREEN("\x1b[2J") 
 
 // move cursor
-#define CRS_POS_SOF PTS("\x1b[H") 
-#define CRS_POS_F PTS("\x1b[C") 
-#define CRS_POS_B PTS("\x1b[D") 
-#define CRS_POS_UP PTS("\x1b[A") 
+#define CRS_POS_SOF PRINT_TO_SCREEN("\x1b[H") 
+#define CRS_POS_F PRINT_TO_SCREEN("\x1b[C") 
+#define CRS_POS_B PRINT_TO_SCREEN("\x1b[D") 
+#define CRS_POS_UP PRINT_TO_SCREEN("\x1b[A") 
 
 // font colors 
-#define FONT_CLR_DEF PTS("\033[0m")
-#define FONT_CLR_GRN PTS("\033[0;32m")
-#define FONT_CLR_RED PTS("\033[0;31m")
+#define FONT_CLR_DEF PRINT_TO_SCREEN("\033[0m")
+#define FONT_CLR_GRN PRINT_TO_SCREEN("\033[0;32m")
+#define FONT_CLR_RED PRINT_TO_SCREEN("\033[0;31m")
 
 /** Data **/
 
@@ -80,10 +80,56 @@ void refreshScreen() {
     CRS_POS_SOF;
 }
 
+void printText() {
+    for (int i = 0; i < tt.length; i++) {
+        if (tt.buffer[i] == '\n') {
+            printf("\u23CE\n");
+        } else {
+            printf("%c", tt.buffer[i]);
+        }
+    }
+    CRS_POS_SOF;
+}
+
 /** Input **/
+
+void parseText() {
+    tt.filename = "test.txt";
+    tt.buffer = 0;
+    FILE * f = fopen(tt.filename, "rb");
+
+    if (f == NULL) {
+        die(tt.filename);
+    } else {
+        fseek(f, 0, SEEK_END);
+        tt.length = ftell(f);
+        fseek(f, 0, SEEK_SET);
+        tt.buffer = malloc(tt.length);
+        if (tt.buffer) fread(tt.buffer, 1, tt.length, f);
+        fclose(f);
+    }
+
+    for (int i = 0; i < tt.length; i++) {
+        if (tt.buffer[i] == ' ' && tt.buffer[i+1] == ' ') {
+            for (int j = i; j < tt.length - 1; j++) {
+                tt.buffer[j] = tt.buffer[j + 1];
+            }
+            tt.length--;
+            i--;
+        } else if (tt.buffer[i + 1] == '\n' && tt.buffer[i] == ' ') {
+            for (int j = i; j < tt.length - 1; j++) {
+                tt.buffer[j] = tt.buffer[j + 1];
+            }
+            tt.length--;
+            i--;
+        }
+    }
+}
 
 void processKeypress() {
     char c = readKey();
+
+    FONT_CLR_DEF;
 
     switch (c) {
         case CTRL_KEY('q'): 
@@ -109,7 +155,7 @@ void processKeypress() {
                     CRS_POS_F;
                 }
                 tt.pos--;
-                PTS("\u23CE");
+                PRINT_TO_SCREEN("\u23CE");
                 CRS_POS_B;
                 break;
             } else {
@@ -123,7 +169,7 @@ void processKeypress() {
             if (tt.buffer[tt.pos] == '\n') {
                 // print green return arrow
                 FONT_CLR_GRN;
-                PTS("\u23CE\n");
+                PRINT_TO_SCREEN("\u23CE\n");
                 tt.pos++;
             }
             break;
@@ -135,7 +181,7 @@ void processKeypress() {
             } else {
                 FONT_CLR_RED;
                 if (tt.buffer[tt.pos] == '\n') {
-                    PTS("\u23CE\n");
+                    PRINT_TO_SCREEN("\u23CE\n");
                 } else {
                     PRINT_FROM_BUFFER;
                 }
@@ -152,50 +198,6 @@ void processKeypress() {
 }
 
 /** Init **/
-
-void parseText() {
-    tt.filename = "test.txt";
-    tt.buffer = 0;
-    FILE * f = fopen(tt.filename, "rb");
-
-    if (f == NULL) {
-        die(tt.filename);
-    } else {
-        fseek(f, 0, SEEK_END); 
-        tt.length = ftell(f);
-        fseek(f, 0, SEEK_SET);
-        tt.buffer = malloc(tt.length);
-        if (tt.buffer) fread(tt.buffer, 1, tt.length, f);
-        fclose(f); 
-    } 
-}
-
-void printText() {
-    for (int i = 0; i < tt.length; i++) {
-        if (tt.buffer[i] == ' ' && tt.buffer[i+1] == ' ') {
-        // drop double spaces
-            for (int j = i; j < tt.length - 1; j++) {
-                tt.buffer[j] = tt.buffer[j + 1];
-            }
-            tt.length--;
-            i--;
-        } else if (tt.buffer[i + 1] == '\n' && tt.buffer[i] == ' ') { 
-        // drop spaces before line breaks
-            for (int j = i; j < tt.length - 1; j++) {
-                tt.buffer[j] = tt.buffer[j + 1];
-            }
-            tt.length--;
-            i--;
-        } else {
-            if (tt.buffer[i] == '\n') {
-                printf("\u23CE\n");
-            } else {
-                printf("%c", tt.buffer[i]);
-            }
-        }
-    }
-    CRS_POS_SOF;
-}
 
 int main() {
     enableRawMode();
