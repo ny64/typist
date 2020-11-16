@@ -5,14 +5,15 @@
 #include <unistd.h>
 
 #include "data.h"
-#include "error.h"
+#include "exit.h"
 #include "helper.h"
 #include "input.h"
+#include "output.h"
 #include "terminal.h"
 
 /** Input **/
 
-void parseText() {
+void parse_text() {
     tt.filename = "test.txt";
     tt.buffer = 0;
     FILE * f = fopen(tt.filename, "rb");
@@ -47,8 +48,8 @@ void parseText() {
     }
 }
 
-void processKeypress() {
-    char c = readKey();
+void process_keypress() {
+    char c = read_key();
 
     FONT_CLR_DEF;
 
@@ -66,54 +67,31 @@ void processKeypress() {
             if (tt.pos == 0) {
                 break;
             } else if (tt.buffer[tt.pos - 1] == '\n') {
-                int i = 2;
-                CRS_POS_UP;
-                while (tt.buffer[tt.pos - i] != '\n' && tt.pos - i != 0) {
-                    CRS_POS_F;
-                    i++;
-                }
-                if (tt.pos - i == 0) {
-                    CRS_POS_F;
-                }
-                tt.pos--;
-                PRINT_TO_SCREEN("\u23CE");
-                CRS_POS_B;
-                break;
+                del_to_prev_line();            
             } else {
-                CRS_POS_B;
-                tt.pos--;
-                PRINT_FROM_BUFFER;
-                CRS_POS_B;
-                break;
-            }
-        case '\r':
-            if (tt.buffer[tt.pos] == '\n') {
-                // print green return arrow
-                FONT_CLR_GRN;
-                PRINT_TO_SCREEN("\u23CE\n");
-                tt.pos++;
+                del();
             }
             break;
+        case '\r':
+            if (tt.buffer[tt.pos] != '\n') break;
+            FONT_CLR_GRN;
+            print_to_next_line();
+            tt.pos++;
+            break;
         default:
-            if (iscntrl(c) && c != '\r') break;
-            if (c == tt.buffer[tt.pos]) {
+            if (iscntrl(c) && c != '\r') { 
+                break;
+            } else if (c == tt.buffer[tt.pos]) {
                 FONT_CLR_GRN;
-                PRINT_FROM_BUFFER;
+                print_from_buffer();
             } else {
                 FONT_CLR_RED;
                 if (tt.buffer[tt.pos] == '\n') {
-                    PRINT_TO_SCREEN("\u23CE\n");
+                    print_to_next_line();
                 } else {
-                    PRINT_FROM_BUFFER;
+                    print_from_buffer();
                 }
             }
             tt.pos++;
-
-            FONT_CLR_DEF;
-
-            if (tt.pos == tt.length) {
-                // TODO: calculate score
-                die("TODO: Calc score");
-            }
     }
 }

@@ -5,7 +5,6 @@
 
 // print to screen
 #define PRINT_TO_SCREEN(s) write(STDOUT_FILENO, s, strlen(s))
-#define PRINT_FROM_BUFFER write(STDOUT_FILENO, &tt.buffer[tt.pos], 1)
 
 // clear screen
 #define CLR_SCREEN PRINT_TO_SCREEN("\x1b[2J")

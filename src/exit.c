@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "error.h"
+#include "exit.h"
 #include "helper.h"
 
 void die(const char *s) {

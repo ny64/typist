@@ -4,24 +4,24 @@
 #include <unistd.h>
 
 #include "data.h"
-#include "error.h"
+#include "exit.h"
 #include "terminal.h"
 
-void disableRawMode() {
+void disable_raw_mode() {
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
         die("tcsetattr");
 }
 
-void enableRawMode() {
+void enable_raw_mode() {
     if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) die("tcgetattr");
-    atexit(disableRawMode);
+    atexit(disable_raw_mode);
     struct termios raw = orig_termios;
     raw.c_iflag &= ~(IXON | ICRNL);
     raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
-char readKey() {
+char read_key() {
     int nread;
     char c;
     while ((nread = read(STDIN_FILENO, &c, 1)) != 1)
