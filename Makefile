@@ -1,2 +1,2 @@
-typingtest: main.c
-	$(CC) main.c -o tt -Wall -Wextra -pedantic -std=c99
+typingtest: src/main.c
+	$(CC) src/*.c -o tt -Wall -Wextra -pedantic -std=c99
