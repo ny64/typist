@@ -1,10 +1,10 @@
-# typingtest
-## Simple terminal typing test
+# typist
+## Terminal Typing Speed Test
 Written in c.
 
 ### Usage
 ```
 make
-./typingtest -f test.txt
+./typist -f test.txt
 ```
 
