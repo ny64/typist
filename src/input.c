@@ -32,19 +32,15 @@ void parse_text() {
     }
 
     for (i = 0; i < tt.length; i++) {
-        if (tt.buffer[i] == ' ' && tt.buffer[i+1] == ' ') {
+        if ((tt.buffer[i+1] == ' ' && tt.buffer[i] == ' ')
+                || (tt.buffer[i+1] == '\n' && tt.buffer[i] == ' ')
+                || (tt.buffer[i+1] == '\n' && tt.buffer[i] == '\n')) {
             for (j = i; j < tt.length - 1; j++) {
-                tt.buffer[j] = tt.buffer[j + 1];
+                tt.buffer[j] = tt.buffer[j+1];
             }
             tt.length--;
             i--;
-        } else if (tt.buffer[i + 1] == '\n' && tt.buffer[i] == ' ') {
-            for (j = i; j < tt.length - 1; j++) {
-                tt.buffer[j] = tt.buffer[j + 1];
-            }
-            tt.length--;
-            i--;
-        }
+        } 
     }
 }
 

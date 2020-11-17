@@ -14,9 +14,9 @@ void print_text() {
     unsigned int i;
     for (i = 0; i < tt.length; i++) {
         if (tt.buffer[i] == '\n') {
-            printf("\u23CE\n");
+            write(STDOUT_FILENO, "\u23CE\n", strlen("\u23CE\n"));
         } else {
-            printf("%c", tt.buffer[i]);
+            write(STDOUT_FILENO, &tt.buffer[i], 1);
         }
     }
     CRS_POS_SOF;
