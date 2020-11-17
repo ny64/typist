@@ -11,8 +11,6 @@
 #include "output.h"
 #include "terminal.h"
 
-/** Input **/
-
 void parse_text() {
     tt.filename = "test.txt";
     tt.buffer = 0;
