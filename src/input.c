@@ -65,10 +65,20 @@ void process_keypress() {
                 del();
             }
             break;
+        case 32:
+            if (tt.buffer[tt.pos] == '\n'){
+                break; // TODO: wrong keypress?
+            } else if (tt.buffer[tt.pos] != ' ') {
+                jump_to_next_word();
+            } else {
+                print_from_buffer();
+                tt.pos++;
+            }
+            break;
         case '\r':
             if (tt.buffer[tt.pos] != '\n') break;
             FONT_CLR_GRN;
-            print_to_next_line();
+            jump_to_next_line();
             tt.pos++;
             break;
         default:
@@ -80,7 +90,7 @@ void process_keypress() {
             } else {
                 FONT_CLR_RED;
                 if (tt.buffer[tt.pos] == '\n') {
-                    print_to_next_line();
+                    jump_to_next_line();
                 } else {
                     print_from_buffer();
                 }

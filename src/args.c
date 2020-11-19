@@ -39,7 +39,6 @@ int parse_argument(char *arg) {
         return 1;
     } else if (curarg == 0) {
         tt.filename = arg;    
-        printf("File: %s\n", tt.filename);
         return 0;
     }
     curarg = 0;

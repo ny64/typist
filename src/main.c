@@ -21,8 +21,6 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    exit(0);
-
     enable_raw_mode();
     refresh_screen();
     parse_text(tt.filename);

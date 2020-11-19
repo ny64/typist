@@ -31,7 +31,20 @@ void print_from_buffer() {
     write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
 }
 
-void print_to_next_line() {
+void jump_to_next_word() {
+    FONT_CLR_RED;
+    while (tt.buffer[tt.pos] != ' ' && tt.buffer[tt.pos] != '\n') {
+        print_from_buffer();
+        tt.pos++;
+    }
+    if (tt.buffer[tt.pos] == ' ') {
+        FONT_CLR_GRN;
+        print_from_buffer();
+        tt.pos++;
+    }
+}
+
+void jump_to_next_line() {
     write(STDOUT_FILENO, "\u23CE\n", strlen("\u23CE\n"));
 }
 
