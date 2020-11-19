@@ -12,7 +12,6 @@
 #include "terminal.h"
 
 void parse_text() {
-    tt.filename = "test.txt";
     tt.buffer = 0;
     FILE * f = fopen(tt.filename, "rb");
 

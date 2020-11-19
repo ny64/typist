@@ -1,8 +1,8 @@
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <string.h>
 
+#include "args.h"
 #include "data.h"
 #include "exit.h"
 #include "input.h"
@@ -10,36 +10,22 @@
 #include "terminal.h"
 
 int main(int argc, char *argv[]) {
-    int c;
-    opterr = 0;
-    while ((c = getopt(argc, argv, "f:t:")) != -1) {
-        switch (c) {
-            case 'f':
-                tt.filename = optarg;
-                break;
-            case 't':
-                tt.time = atoi(optarg);
-                break;
-            case '?':
-                if (optopt == 'c') {
-                    fprintf(stderr, 
-                            "Option -%c requires an argument.\n", optopt);
-                } else if (isprint (optopt)) {
-                    fprintf(stderr, 
-                            "Unknown option `-%c'.\n", optopt);
-                } else {
-                    fprintf(stderr, 
-                            "Unknown option character `\\x%x'.\n", optopt);
-                }
-            return 1;
-            default:
-                abort();
-        }
+
+    int no_filename = 1;
+    for (int i = 1; i < argc; i++) {
+        no_filename = parse_argument(argv[i]);
     }
+    if (no_filename) {
+        printf("You have to provide a textfile for the typingtest.\n\n");
+        print_help();
+        exit(1);
+    }
+
+    exit(0);
 
     enable_raw_mode();
     refresh_screen();
-    parse_text("test.txt");
+    parse_text(tt.filename);
     print_text();
 
     while (1) {

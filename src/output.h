@@ -1,6 +1,7 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 
+extern void print_help();
 extern void refresh_screen();
 extern void print_text();
 extern void print_to_next_line();

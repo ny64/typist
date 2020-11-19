@@ -5,6 +5,11 @@
 #include "data.h"
 #include "helper.h"
 
+void print_help() {
+    printf("Usage: typist [OPTION]... [FILE]\n");
+    printf("Start a typing speed test with the specified .txt FILE.\n");
+}
+
 void refresh_screen() {
     CLR_SCREEN;
     CRS_POS_SOF;
