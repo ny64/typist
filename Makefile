@@ -1,2 +1,2 @@
 typingtest: src/main.c
-	$(CC) src/*.c -o tt -Wall -Wextra -pedantic 
+	$(CC) src/*.c -o typist -Wall -Wextra -pedantic 
