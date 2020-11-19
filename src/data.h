@@ -4,6 +4,7 @@
 struct typingtest {
     char *filename;
     char *buffer;
+    char *buffer_score;
     unsigned int time;
     unsigned int length;
     unsigned int pos;

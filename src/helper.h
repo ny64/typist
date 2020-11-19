@@ -14,6 +14,7 @@
 #define CRS_POS_F PRINT_TO_SCREEN("\x1b[C")
 #define CRS_POS_B PRINT_TO_SCREEN("\x1b[D")
 #define CRS_POS_UP PRINT_TO_SCREEN("\x1b[A")
+#define CRS_POS_DOWN PRINT_TO_SCREEN("\x1b[B")
 
 // font colors
 #define FONT_CLR_DEF PRINT_TO_SCREEN("\033[0m")

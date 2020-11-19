@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
         process_keypress();
         if (tt.pos == tt.length) {
             // TODO: calculate score
-            die("TODO: Calc score");
+            print_score();
         }
     }
 

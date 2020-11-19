@@ -10,5 +10,6 @@ extern void jump_to_next_line();
 extern void del();
 extern void del_word();
 extern void del_to_prev_line();
+extern void print_score();
 
 #endif //OUTPUT_H

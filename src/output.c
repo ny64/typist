@@ -35,11 +35,13 @@ void jump_to_next_word() {
     FONT_CLR_RED;
     while (tt.buffer[tt.pos] != ' ' && tt.buffer[tt.pos] != '\n') {
         print_from_buffer();
+        tt.buffer_score[tt.pos] = -1;
         tt.pos++;
     }
     if (tt.buffer[tt.pos] == ' ') {
         FONT_CLR_GRN;
         print_from_buffer();
+        tt.buffer_score[tt.pos] = 1;
         tt.pos++;
     }
 }
@@ -68,5 +70,9 @@ void del_to_prev_line() {
     tt.pos--;
     PRINT_TO_SCREEN("\u23CE");
     CRS_POS_B;
+}
+
+void print_score() {
+
 }
 
