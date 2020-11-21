@@ -6,6 +6,7 @@ struct typingtest {
     char *buffer;
     char *buffer_score;
     unsigned int time;
+    unsigned long elapsed_time;
     unsigned int length;
     unsigned int pos;
 };

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -73,6 +74,30 @@ void del_to_prev_line() {
 }
 
 void print_score() {
+    float wpm, kpm;
+    int keystrokes = 0;
+    int correct = 0;
+    int wrong = 0;
 
+    for (int i = 0; tt.buffer_score[i] != 0; i++) {
+        keystrokes++;
+        if (tt.buffer_score[i] == 1) correct++;
+        else wrong++;
+    }
+
+    kpm = 60 / (float)tt.elapsed_time * (float)correct;
+    wpm = kpm / 4.79;  // average word length in the english language
+
+    CLR_SCREEN;
+    CRS_POS_SOF;
+    FONT_CLR_DEF;
+    printf("Keystrokes:\t(");
+    printf("\x1b[32m%d", correct);
+    printf("\x1b[0m|");
+    printf("\x1b[31m%d", wrong);
+    printf("\x1b[0m) %d\n", keystrokes);
+    printf("KPM:\t\t%.2f\n", kpm);
+    printf("WPM:\t\t%.2f\n", wpm);
+    exit(0);
 }
 

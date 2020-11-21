@@ -10,6 +10,7 @@
 #include "input.h"
 #include "output.h"
 #include "terminal.h"
+#include "timer.h"
 
 void parse_text() {
     tt.buffer = 0;

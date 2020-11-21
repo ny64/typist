@@ -8,6 +8,7 @@
 #include "input.h"
 #include "output.h"
 #include "terminal.h"
+#include "timer.h"
 
 int main(int argc, char *argv[]) {
 
@@ -15,6 +16,8 @@ int main(int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
         no_filename = parse_argument(argv[i]);
     }
+
+    // TODO: Move this 
     if (no_filename) {
         printf("You have to provide a textfile for the typingtest.\n\n");
         print_help();
@@ -28,7 +31,8 @@ int main(int argc, char *argv[]) {
 
     while (1) {
         process_keypress();
-        if (tt.pos == tt.length) {
+
+        if (check_timer() || tt.pos == tt.length) {
             // TODO: calculate score
             print_score();
         }
