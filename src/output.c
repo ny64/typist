@@ -8,7 +8,12 @@
 
 void print_help() {
     printf("Usage: typist [OPTION]... [FILE]\n");
-    printf("Start a typing speed test with the specified .txt FILE.\n");
+    printf("Start a typing speed test with the specified .txt FILE.\n\n");
+    printf("  -t [TIME], --time [TIME]\t\tset the duration of the test;\n"\
+            "\t\t\t\t\tTIME sets the time in seconds\n");
+    printf("  -r [AMOUNT], --random [AMOUNT]\trandomize words and cut "\
+            "punctuation marks in text file;\n"\
+            "\t\t\t\t\tAMOUNT specifies the amount of words\n");
 }
 
 void refresh_screen() {

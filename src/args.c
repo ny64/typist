@@ -12,18 +12,28 @@ int parse_argument(char *arg) {
     if (curarg != 0) {
         switch (curarg) {
             case 't':
-                printf("%d\n", atoi(arg));
                 if (arg[0] == '-' && !atoi(arg)) {
                     printf("No time specified.\n\n");
                     print_help();
                     exit(1);
-                } else if (atoi(arg) < 10) {
-                    printf("Time provided must be an integer greater than"\
-                            " or equal to 10.\n\n");
+                } else if (atoi(arg) < 1) {
+                    printf("Time provided must be a positive integer.\n\n");
                     print_help();
                     exit(1);
                 }
                 tt.time = (unsigned int)atoi(arg);
+                break;
+            case 'r':
+                if (arg[0] == '-' && !atoi(arg)) {
+                    printf("Amount of words not specified.\n\n");
+                    print_help();
+                    exit(1);
+                } else if (atoi(arg) < 1) {
+                    printf("Amount of words must be a positive integer.\n\n");
+                    print_help();
+                    exit(1);
+                }
+                tt.random = (unsigned int)atoi(arg);
                 break;
         }
     }
@@ -31,6 +41,8 @@ int parse_argument(char *arg) {
     if (arg[0] == '-') {
         if (!strcmp(arg, "-t") || !strcmp(arg, "--time")) {
             curarg = 't';
+        } else if (!strcmp(arg, "-r") || !strcmp(arg, "--random")) {
+            curarg = 'r';
         } else {
             printf("Unknown argument %s.\n\n", arg);
             print_help();

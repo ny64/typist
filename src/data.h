@@ -9,6 +9,7 @@ struct typingtest {
     unsigned long elapsed_time;
     unsigned int length;
     unsigned int pos;
+    unsigned int random;
 };
 extern struct typingtest tt;
 extern struct termios orig_termios;

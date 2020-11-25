@@ -16,20 +16,20 @@ void parse_text() {
     tt.buffer = 0;
     tt.buffer_score = 0;
     FILE * f = fopen(tt.filename, "rb");
-
+    
     unsigned int i, j;
 
     if (f == NULL) {
         die(tt.filename);
-    } else {
-        fseek(f, 0, SEEK_END);
-        tt.length = ftell(f);
-        fseek(f, 0, SEEK_SET);
-        tt.buffer = malloc(tt.length);
-        tt.buffer_score = malloc(tt.length);
-        if (tt.buffer) fread(tt.buffer, 1, tt.length, f);
-        fclose(f);
     }
+
+    fseek(f, 0, SEEK_END);
+    tt.length = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    tt.buffer = malloc(tt.length);
+    tt.buffer_score = malloc(tt.length);
+    if (tt.buffer) fread(tt.buffer, 1, tt.length, f);
+    fclose(f);
 
     for (i = 0; i < tt.length; i++) {
         tt.buffer_score[i] = 0;
@@ -41,7 +41,21 @@ void parse_text() {
             }
             tt.length--;
             i--;
-        } 
+        }
+    }
+}
+
+void random_parse_text() {
+    tt.buffer = 0;
+    tt.buffer_score = 0;
+    FILE * f = fopen(tt.filename, "rb");
+
+    if (f == NULL) {
+        die(tt.filename);
+    }
+
+    for (int i = 0; i < tt.random; i++) {
+
     }
 }
 
@@ -66,7 +80,7 @@ void process_keypress() {
             if (tt.pos == 0) {
                 break;
             } else if (tt.buffer[tt.pos - 1] == '\n') {
-                del_to_prev_line();            
+                del_to_prev_line();
                 tt.buffer_score[tt.pos] = 0;
             } else {
                 del();
@@ -91,7 +105,7 @@ void process_keypress() {
             tt.pos++;
             break;
         default:
-            if (iscntrl(c) && c != '\r') { 
+            if (iscntrl(c) && c != '\r') {
                 break;
             } else if (c == tt.buffer[tt.pos]) {
                 FONT_CLR_GRN;

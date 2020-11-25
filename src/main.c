@@ -11,13 +11,14 @@
 #include "timer.h"
 
 int main(int argc, char *argv[]) {
+    tt.time = 60;
+    tt.random = 0;
 
     int no_filename = 1;
     for (int i = 1; i < argc; i++) {
         no_filename = parse_argument(argv[i]);
     }
 
-    // TODO: Move this 
     if (no_filename) {
         printf("You have to provide a textfile for the typingtest.\n\n");
         print_help();
@@ -26,7 +27,10 @@ int main(int argc, char *argv[]) {
 
     enable_raw_mode();
     refresh_screen();
-    parse_text(tt.filename);
+    if (tt.random)
+        random_parse_text();
+    else
+        parse_text();
     print_text();
 
     while (1) {
