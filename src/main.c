@@ -12,7 +12,6 @@
 
 int main(int argc, char *argv[]) {
     tt.time = 60;
-    tt.random = 0;
 
     int no_filename = 1;
     for (int i = 1; i < argc; i++) {
@@ -27,10 +26,7 @@ int main(int argc, char *argv[]) {
 
     enable_raw_mode();
     refresh_screen();
-    if (tt.random)
-        random_parse_text();
-    else
-        parse_text();
+    parse_text();
     print_text();
 
     while (1) {

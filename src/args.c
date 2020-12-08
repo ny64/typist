@@ -23,26 +23,12 @@ int parse_argument(char *arg) {
                 }
                 tt.time = (unsigned int)atoi(arg);
                 break;
-            case 'r':
-                if (arg[0] == '-' && !atoi(arg)) {
-                    printf("Amount of words not specified.\n\n");
-                    print_help();
-                    exit(1);
-                } else if (atoi(arg) < 1) {
-                    printf("Amount of words must be a positive integer.\n\n");
-                    print_help();
-                    exit(1);
-                }
-                tt.random = (unsigned int)atoi(arg);
-                break;
         }
     }
 
     if (arg[0] == '-') {
         if (!strcmp(arg, "-t") || !strcmp(arg, "--time")) {
             curarg = 't';
-        } else if (!strcmp(arg, "-r") || !strcmp(arg, "--random")) {
-            curarg = 'r';
         } else {
             printf("Unknown argument %s.\n\n", arg);
             print_help();

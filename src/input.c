@@ -45,20 +45,6 @@ void parse_text() {
     }
 }
 
-void random_parse_text() {
-    tt.buffer = 0;
-    tt.buffer_score = 0;
-    FILE * f = fopen(tt.filename, "rb");
-
-    if (f == NULL) {
-        die(tt.filename);
-    }
-
-    for (int i = 0; i < tt.random; i++) {
-
-    }
-}
-
 void process_keypress() {
     char c = read_key();
 
