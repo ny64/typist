@@ -2,6 +2,8 @@
 #define DATA_H
 
 struct typingtest {
+    int term_rows;
+    int term_cols;
     char *filename;
     char *buffer;
     char *buffer_score;

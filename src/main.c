@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -19,12 +20,13 @@ int main(int argc, char *argv[]) {
     }
 
     if (no_filename) {
-        printf("You have to provide a textfile for the typingtest.\n\n");
+        die("You have to provide a text file.", 1);
         print_help();
         exit(1);
     }
 
     enable_raw_mode();
+    init_terminal();
     refresh_screen();
     parse_text();
     print_text();

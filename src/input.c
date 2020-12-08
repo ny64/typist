@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,11 +17,22 @@ void parse_text() {
     tt.buffer = 0;
     tt.buffer_score = 0;
     FILE * f = fopen(tt.filename, "rb");
-    
+
     unsigned int i, j;
 
     if (f == NULL) {
-        die(tt.filename);
+        die(tt.filename, 0);
+    }
+
+    char ch;
+    int line_count = 0;
+    while ((ch = fgetc(f)) != EOF) {
+        if (ch == '\n')
+            line_count++;
+    }
+
+    if (line_count > tt.term_cols) {
+        die("Terminal size too small to display text.", 0);
     }
 
     fseek(f, 0, SEEK_END);
@@ -53,14 +65,14 @@ void process_keypress() {
     switch (c) {
         case CTRL_KEY('q'):
             CLR_SCREEN;
-            CRS_POS_SOF;
+            CRS_POS_TOP;
             exit(0);
         case CTRL_KEY('c'):
             print_score();
             break;
         case CTRL_KEY('r'):
             // TODO: restart test
-            die("TODO: Restart Test");
+            die("TODO: Restart Test", 0);
             break;
         case 127:
             if (tt.pos == 0) {

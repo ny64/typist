@@ -18,7 +18,7 @@ void print_help() {
 
 void refresh_screen() {
     CLR_SCREEN;
-    CRS_POS_SOF;
+    CRS_POS_TOP;
 }
 
 void print_text() {
@@ -30,7 +30,7 @@ void print_text() {
             write(STDOUT_FILENO, &tt.buffer[i], 1);
         }
     }
-    CRS_POS_SOF;
+    CRS_POS_TOP;
 }
 
 void print_from_buffer() {
@@ -94,7 +94,7 @@ void print_score() {
     wpm = kpm / 4.79;  // average word length in the english language
 
     CLR_SCREEN;
-    CRS_POS_SOF;
+    CRS_POS_TOP;
     FONT_CLR_DEF;
     printf("Keystrokes:\t(");
     printf("\x1b[32m%d", correct);
