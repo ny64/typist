@@ -20,7 +20,7 @@ void die(const char *s, int help) {
     }
 
     if (help) {
-        printf("\n\n");
+        printf("\n");
         print_help();
     }
 
