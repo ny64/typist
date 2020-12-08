@@ -56,10 +56,16 @@ void print_help() {
     printf("Usage: typist [OPTION]... [FILE]\n");
     printf("Start a typing speed test with the specified .txt FILE.\n\n");
     printf("  -t [TIME], --time [TIME]\t\tset the duration of the test;\n"\
-            "\t\t\t\t\tTIME sets the time in seconds\n");
-    printf("  -r [AMOUNT], --random [AMOUNT]\trandomize words and cut "\
-            "punctuation marks in text file;\n"\
-            "\t\t\t\t\tAMOUNT specifies the amount of words\n");
+            "\t\t\t\t\tTIME sets the time in seconds;\n"\
+            "\t\t\t\t\te.g. -t 600 for a 10 minute typing test;\n"\
+            "\t\t\t\t\tDefault is set to 60 seconds\n");
+    printf("  --average-word-length [LENGTH]\tset average word length "\
+            "for calculating WPM;\n"\
+            "\t\t\t\t\tLENGTH specifies the average length of a word;\n"\
+            "\t\t\t\t\te.g. --average-word-length 6.0 for average word length "\
+            "in the german language;\n"\
+            "\t\t\t\t\tDefault is set to 4.79 (default word length in the "\
+            "english language)\n");
 }
 
 void print_score() {
@@ -75,7 +81,7 @@ void print_score() {
     }
 
     kpm = 60 / (float)tt.elapsed_time * (float)correct;
-    wpm = kpm / 4.79;  // average word length in the english language
+    wpm = kpm / tt.avg_word_length;  // average word length in the english language
 
     CLR_SCREEN;
     CRS_POS_TOP;

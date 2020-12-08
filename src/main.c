@@ -13,6 +13,7 @@
 
 int main(int argc, char *argv[]) {
     tt.time = 60;
+    tt.avg_word_length = 4.79;
 
     int no_filename = 1;
     for (int i = 1; i < argc; i++) {

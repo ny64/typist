@@ -4,6 +4,7 @@
 struct typingtest {
     int term_rows;
     int term_cols;
+    float avg_word_length;
     char *filename;
     char *buffer;
     char *buffer_score;
