@@ -71,7 +71,7 @@ void process_keypress() {
             print_score();
             break;
         case CTRL_KEY('r'):
-            init_terminal();
+            refresh_screen();
             parse_text();
             print_text();
             tt.pos = 0;
