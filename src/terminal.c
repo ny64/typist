@@ -7,6 +7,7 @@
 
 #include "data.h"
 #include "exit.h"
+#include "output.h"
 #include "terminal.h"
 #include "timer.h"
 
@@ -37,9 +38,10 @@ int get_window_size(int *rows, int *cols) {
 }
 
 void init_terminal() {
+    enable_raw_mode();
     if (get_window_size(&tt.term_rows, &tt.term_cols) == -1)
         die("get_window_size", 0);
-    printf("%d:%d\n", tt.term_rows, tt.term_cols);
+    refresh_screen();
 }
 
 int first_key_read = 0;

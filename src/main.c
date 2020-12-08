@@ -21,25 +21,19 @@ int main(int argc, char *argv[]) {
 
     if (no_filename) {
         die("You have to provide a text file.", 1);
-        print_help();
         exit(1);
     }
 
-    enable_raw_mode();
     init_terminal();
-    refresh_screen();
     parse_text();
     print_text();
 
     while (1) {
         process_keypress();
-
         if (check_timer() || tt.pos == tt.length) {
-            // TODO: calculate score
             print_score();
         }
     }
 
     return 0;
 }
-

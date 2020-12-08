@@ -5,56 +5,7 @@
 
 #include "data.h"
 #include "helper.h"
-
-void print_help() {
-    printf("Usage: typist [OPTION]... [FILE]\n");
-    printf("Start a typing speed test with the specified .txt FILE.\n\n");
-    printf("  -t [TIME], --time [TIME]\t\tset the duration of the test;\n"\
-            "\t\t\t\t\tTIME sets the time in seconds\n");
-    printf("  -r [AMOUNT], --random [AMOUNT]\trandomize words and cut "\
-            "punctuation marks in text file;\n"\
-            "\t\t\t\t\tAMOUNT specifies the amount of words\n");
-}
-
-void refresh_screen() {
-    CLR_SCREEN;
-    CRS_POS_TOP;
-}
-
-void print_text() {
-    unsigned int i;
-    for (i = 0; i < tt.length; i++) {
-        if (tt.buffer[i] == '\n') {
-            write(STDOUT_FILENO, "\u23CE\n", strlen("\u23CE\n"));
-        } else {
-            write(STDOUT_FILENO, &tt.buffer[i], 1);
-        }
-    }
-    CRS_POS_TOP;
-}
-
-void print_from_buffer() {
-    write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
-}
-
-void jump_to_next_word() {
-    FONT_CLR_RED;
-    while (tt.buffer[tt.pos] != ' ' && tt.buffer[tt.pos] != '\n') {
-        print_from_buffer();
-        tt.buffer_score[tt.pos] = -1;
-        tt.pos++;
-    }
-    if (tt.buffer[tt.pos] == ' ') {
-        FONT_CLR_GRN;
-        print_from_buffer();
-        tt.buffer_score[tt.pos] = 1;
-        tt.pos++;
-    }
-}
-
-void jump_to_next_line() {
-    write(STDOUT_FILENO, "\u23CE\n", strlen("\u23CE\n"));
-}
+#include "output.h"
 
 void del() {
     CRS_POS_B;
@@ -76,6 +27,39 @@ void del_to_prev_line() {
     tt.pos--;
     PRINT_TO_SCREEN("\u23CE");
     CRS_POS_B;
+}
+
+void jump_to_next_line() {
+    write(STDOUT_FILENO, "\u23CE\n", strlen("\u23CE\n"));
+}
+
+void jump_to_next_word() {
+    FONT_CLR_RED;
+    while (tt.buffer[tt.pos] != ' ' && tt.buffer[tt.pos] != '\n') {
+        print_from_buffer();
+        tt.buffer_score[tt.pos] = -1;
+        tt.pos++;
+    }
+    if (tt.buffer[tt.pos] == ' ') {
+        FONT_CLR_GRN;
+        print_from_buffer();
+        tt.buffer_score[tt.pos] = 1;
+        tt.pos++;
+    }
+}
+
+void print_from_buffer() {
+    write(STDOUT_FILENO, &tt.buffer[tt.pos], 1);
+}
+
+void print_help() {
+    printf("Usage: typist [OPTION]... [FILE]\n");
+    printf("Start a typing speed test with the specified .txt FILE.\n\n");
+    printf("  -t [TIME], --time [TIME]\t\tset the duration of the test;\n"\
+            "\t\t\t\t\tTIME sets the time in seconds\n");
+    printf("  -r [AMOUNT], --random [AMOUNT]\trandomize words and cut "\
+            "punctuation marks in text file;\n"\
+            "\t\t\t\t\tAMOUNT specifies the amount of words\n");
 }
 
 void print_score() {
@@ -106,3 +90,19 @@ void print_score() {
     exit(0);
 }
 
+void print_text() {
+    unsigned int i;
+    for (i = 0; i < tt.length; i++) {
+        if (tt.buffer[i] == '\n') {
+            write(STDOUT_FILENO, "\u23CE\n", strlen("\u23CE\n"));
+        } else {
+            write(STDOUT_FILENO, &tt.buffer[i], 1);
+        }
+    }
+    CRS_POS_TOP;
+}
+
+void refresh_screen() {
+    CLR_SCREEN;
+    CRS_POS_TOP;
+}

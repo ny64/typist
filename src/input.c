@@ -71,8 +71,11 @@ void process_keypress() {
             print_score();
             break;
         case CTRL_KEY('r'):
-            // TODO: restart test
-            die("TODO: Restart Test", 0);
+            init_terminal();
+            parse_text();
+            print_text();
+            tt.pos = 0;
+            first_key_read = 0;
             break;
         case 127:
             if (tt.pos == 0) {
@@ -86,7 +89,7 @@ void process_keypress() {
             break;
         case 32:
             if (tt.buffer[tt.pos] == '\n'){
-                break; // TODO: wrong keypress?
+                break;
             } else if (tt.buffer[tt.pos] != ' ') {
                 jump_to_next_word();
             } else {
