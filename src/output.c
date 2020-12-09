@@ -81,7 +81,7 @@ void print_score() {
     }
 
     kpm = 60 / (float)tt.elapsed_time * (float)correct;
-    wpm = kpm / tt.avg_word_length;  // average word length in the english language
+    wpm = kpm / tt.avg_word_length;
 
     CLR_SCREEN;
     CRS_POS_TOP;

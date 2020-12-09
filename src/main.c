@@ -14,16 +14,11 @@
 int main(int argc, char *argv[]) {
     tt.time = 60;
     tt.avg_word_length = 4.79;
-
     int no_filename = 1;
-    for (int i = 1; i < argc; i++) {
+    for (int i = 1; i < argc; i++)
         no_filename = parse_argument(argv[i]);
-    }
-
-    if (no_filename) {
+    if (no_filename)
         die("You have to provide a text file.", 1);
-        exit(1);
-    }
 
     init_terminal();
     parse_text();
