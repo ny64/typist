@@ -63,13 +63,11 @@ void process_keypress() {
     FONT_CLR_DEF;
 
     switch (c) {
+        case CTRL_KEY('c'):
         case CTRL_KEY('q'):
             CLR_SCREEN;
             CRS_POS_TOP;
             exit(0);
-        case CTRL_KEY('c'):
-            print_score();
-            break;
         case CTRL_KEY('r'):
             refresh_screen();
             parse_text();
