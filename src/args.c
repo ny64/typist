@@ -32,7 +32,10 @@ int parse_argument(char *arg) {
     }
 
     if (arg[0] == '-') {
-        if (!strcmp(arg, "-t") || !strcmp(arg, "--time")) {
+        if (!strcmp(arg, "-h") || !strcmp(arg, "--help")) {
+            print_help();
+            exit(0);
+        } else if (!strcmp(arg, "-t") || !strcmp(arg, "--time")) {
             curarg = 't';
         } else if (!strcmp(arg, "--average-word-length")) {
             curarg = 'l';
