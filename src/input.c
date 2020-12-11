@@ -16,6 +16,8 @@
 void parse_text() {
     tt.buffer = 0;
     tt.buffer_score = 0;
+    tt.is_new_line = 0;
+    tt.is_new_page = 0;
     FILE * f = fopen(tt.filename, "rb");
 
     unsigned int i, j;
@@ -24,22 +26,13 @@ void parse_text() {
         die(tt.filename, 0);
     }
 
-    char ch;
-    int line_count = 0;
-    while ((ch = fgetc(f)) != EOF) {
-        if (ch == '\n')
-            line_count++;
-    }
-
-    if (line_count > tt.term_cols) {
-        die("Terminal size too small to display text.", 0);
-    }
-
     fseek(f, 0, SEEK_END);
     tt.length = ftell(f);
     fseek(f, 0, SEEK_SET);
     tt.buffer = malloc(tt.length);
     tt.buffer_score = malloc(tt.length);
+    tt.is_new_line = malloc(tt.length);
+    tt.is_new_page = malloc(tt.length);
     if (tt.buffer) fread(tt.buffer, 1, tt.length, f);
     fclose(f);
 
@@ -54,6 +47,24 @@ void parse_text() {
             tt.length--;
             i--;
         }
+    }
+
+    int text_rows = 1;
+    int text_cols = 1;
+    for (i = 0; i < tt.length; i++) {
+        if (tt.buffer[i] == '\n' || text_cols == tt.term_cols) {
+            text_rows++;
+            text_cols = 0;
+            tt.is_new_line[i+1] = 1;
+        } else {
+            tt.is_new_line[i+1] = 0;
+        }
+        if (text_rows == tt.term_rows - 1 && text_cols == 0) {
+            tt.is_new_page[i+1] = 1;
+        } else {
+            tt.is_new_page[i+1] = 0;
+        }
+        text_cols++;
     }
 }
 
@@ -76,15 +87,16 @@ void process_keypress() {
             first_key_read = 0;
             break;
         case 127:
-            if (tt.pos == 0) {
+            if (tt.pos == 0 || tt.is_new_page[tt.pos]) {
                 break;
             } else if (tt.buffer[tt.pos - 1] == '\n') {
                 del_to_prev_line();
                 tt.buffer_score[tt.pos] = 0;
+                break;
             } else {
                 del();
+                break;
             }
-            break;
         case 32:
             if (tt.buffer[tt.pos] == '\n'){
                 break;
@@ -121,4 +133,9 @@ void process_keypress() {
             }
             tt.pos++;
     }
+
+    if (tt.pos == tt.print_index) {
+        print_text();
+    }
 }
+
