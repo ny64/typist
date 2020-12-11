@@ -2,16 +2,22 @@
 #define DATA_H
 
 struct typingtest {
+    char *filename;
+    float avg_word_length;
+    unsigned int time;
+
     int term_rows;
     int term_cols;
-    float avg_word_length;
-    char *filename;
+
     char *buffer;
     char *buffer_score;
-    unsigned int time;
-    unsigned long elapsed_time;
+    char *is_new_line;
+    char *is_new_page;
     unsigned int length;
     unsigned int pos;
+    unsigned int print_index;
+    
+    unsigned long elapsed_time;
 };
 
 extern struct typingtest tt;
