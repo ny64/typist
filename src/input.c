@@ -97,6 +97,8 @@ void process_keypress() {
                 del();
                 break;
             }
+        /* This block changes the behaviour of pressing space; skip over 
+         * current word on pressing space
         case 32:
             if (tt.buffer[tt.pos] == '\n'){
                 break;
@@ -108,6 +110,7 @@ void process_keypress() {
                 tt.pos++;
             }
             break;
+        */
         case '\r':
             if (tt.buffer[tt.pos] != '\n') break;
             FONT_CLR_GRN;
