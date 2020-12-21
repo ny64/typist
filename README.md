@@ -26,7 +26,7 @@ terminal. Then move the binary file into one of the folders. For this example I
 will put it into <code>/usr/bin</code>.
 
 ```
-sudo mv ./typist /usr/bin
+sudo mv typist /usr/bin
 ```
 
 ## Usage
@@ -67,7 +67,7 @@ English language. You can use this script on any text file, though it will
 remove punctuation marks and reformats the text.
 
 ```
-python3 ./utils/randomize.py ./most-used-words.txt
+python3 utils/randomize.py most-used-words.txt
 ```
 
 ---
