@@ -6,7 +6,7 @@ standard c libraries.
 ![typist v0.1 GIF](resources/demo.gif)
 
 ## Installation
-There already is a binary file you can use.
+There already is a [binary file](https://github.com/ny64/typist/raw/master/typist) you can download directly.
 To compile it yourself you need a C compiler like <code>gcc</code>. Your
 installed version will most likely work.
 
