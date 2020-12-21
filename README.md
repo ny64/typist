@@ -74,7 +74,7 @@ python3 ./utils/randomize.py ./most-used-words.txt
 
 ### [Issues / Bugs](https://github.com/ny64/typist/issues)
 
-You can also contact me via email if you have any further questions.
+You can also contact me via [email](mailto:peter_breitzler@protonmail.com) if you have any further questions.
 
 ---
 
