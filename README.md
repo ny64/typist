@@ -41,7 +41,7 @@ The test starts after the program receives the first input. It checks the time
 after each input and charts your result after 60 seconds.
 
 There are options you can use to change the behavior of typist, like changing
-the time you have till the tests ends.
+the time you have till the test ends.
 In this example the time is set to 10 minutes.
 
 ```
@@ -64,7 +64,7 @@ To see all available options type <code>typist --help</code> or just
 Doing the same test over and over again isn't good practice. I have provided
 a text file and a small python script to randomize the most used words in the
 English language. You can use this script on any text file, though it will
-remove punctuation marks and formats the text.
+remove punctuation marks and reformats the text.
 
 ```
 python3 ./utils/randomize.py ./most-used-words.txt
