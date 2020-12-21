@@ -72,12 +72,12 @@ python3 ./utils/randomize.py ./most-used-words.txt
 
 ---
 
-## [Issues / Bugs](https://github.com/ny64/typist/issues)
+### [Issues / Bugs](https://github.com/ny64/typist/issues)
 
 You can also write me an Email if you have any questions or whatever.
 
 ---
 
-## License
+### License
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
 © [Peter Breitzler](https://github.com/ny64)
