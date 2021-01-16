@@ -79,13 +79,13 @@ void process_keypress() {
             CLR_SCREEN;
             CRS_POS_TOP;
             exit(0);
-        case CTRL_KEY('r'):
+/*        case CTRL_KEY('r'):
             refresh_screen();
             parse_text();
             print_text();
             tt.pos = 0;
             first_key_read = 0;
-            break;
+            break;*/
         case 127:
             if (tt.pos == 0 || tt.is_new_page[tt.pos]) {
                 break;

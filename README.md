@@ -56,7 +56,6 @@ To see all available options type <code>typist --help</code> or just
 | Binding | Function |
 |---------|----------|
 | <kbd>Ctrl</kbd> + <kbd>q</kbd>; <kbd>Ctrl</kbd> + <kbd>c</kbd> | Exit |
-| <kbd>Ctrl</kbd> + <kbd>r</kbd> | Restart typing test |
 
 
 ### Tips
