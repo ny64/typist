@@ -51,7 +51,6 @@ char read_key() {
     char c;
 
     while ((nread = read(STDIN_FILENO, &c, 1)) != 1) {
-        printf("READ KEY\n");
         if (nread == -1 && errno != EAGAIN) die("read", 0);
     }
 
